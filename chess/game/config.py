@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass
 
-from AI_search.chess.core.enums import ControlType
+from chess.core.enums import ControlType
 
 
 @dataclass

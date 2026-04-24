@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pygame
 
-from AI_search.chess.core.board import Board
-from AI_search.chess.core.enums import PieceType, Side
-from AI_search.chess.ui.coord_mapper import CoordMapper
+from chess.core.board import Board
+from chess.core.enums import PieceType, Side
+from chess.ui.coord_mapper import CoordMapper
 
 
 PIECE_TEXT = {

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from AI_search.chess.core.enums import PieceType, Side
-from AI_search.chess.core.move import Move
+from chess.core.enums import PieceType, Side
+from chess.core.move import Move
 
 from .evaluator import piece_value
 

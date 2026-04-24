@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import pygame
 
-from AI_search.chess.core.board import Board
-from AI_search.chess.core.enums import GameResult, Side
-from AI_search.chess.core.move import Move
-from AI_search.chess.game.config import GameConfig
-from AI_search.chess.game.players import Player, create_player
-from AI_search.chess.ui.coord_mapper import CoordMapper
-from AI_search.chess.ui.pygame_view import PygameView
+from chess.core.board import Board
+from chess.core.enums import GameResult, Side
+from chess.core.move import Move
+from chess.game.config import GameConfig
+from chess.game.players import Player, create_player
+from chess.ui.coord_mapper import CoordMapper
+from chess.ui.pygame_view import PygameView
 
 
 class GameController:

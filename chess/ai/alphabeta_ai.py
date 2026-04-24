@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Optional
 
-from AI_search.chess.core.board import Board
-from AI_search.chess.core.enums import Side
-from AI_search.chess.core.move import Move
+from chess.core.board import Board
+from chess.core.enums import Side
+from chess.core.move import Move
 
 from .base_ai import BaseAI
 from .evaluator import evaluate

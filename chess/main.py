@@ -1,7 +1,13 @@
 from __future__ import annotations
 
-from AI_search.chess.game.config import parse_game_config
-from AI_search.chess.game.controller import GameController
+import sys
+from pathlib import Path
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from chess.game.config import parse_game_config
+from chess.game.controller import GameController
 
 
 def main() -> None:

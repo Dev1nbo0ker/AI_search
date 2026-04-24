@@ -3,12 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
-from AI_search.chess.ai.alphabeta_ai import AlphaBetaAI
-from AI_search.chess.ai.base_ai import BaseAI
-from AI_search.chess.ai.rule_ai import RuleAI
-from AI_search.chess.core.board import Board
-from AI_search.chess.core.enums import ControlType, Side
-from AI_search.chess.core.move import Move
+from chess.ai.alphabeta_ai import AlphaBetaAI
+from chess.ai.base_ai import BaseAI
+from chess.ai.rule_ai import RuleAI
+from chess.core.board import Board
+from chess.core.enums import ControlType, Side
+from chess.core.move import Move
 
 
 @dataclass
