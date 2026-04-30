@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass
 
-from chess.core.enums import ControlType
+from cn_chess.core.enums import ControlType
 
 
 @dataclass
@@ -37,7 +37,7 @@ def _mode_defaults(mode: str) -> tuple[ControlType, ControlType]:
 
 
 def parse_game_config() -> GameConfig:
-    parser = argparse.ArgumentParser(description="中国象棋（pygame）")
+    parser = argparse.ArgumentParser(description="Chinese chess (pygame)")
     parser.add_argument(
         "--mode",
         choices=[
@@ -48,27 +48,27 @@ def parse_game_config() -> GameConfig:
             "custom",
         ],
         default="human_vs_rule_ai",
-        help="预设模式（custom 时使用 --red/--black）",
+        help="Preset mode. Use --red/--black with custom mode.",
     )
     parser.add_argument(
         "--red",
         choices=[c.value for c in ControlType],
         default=None,
-        help="红方控制：human/rule_ai/alphabeta_ai",
+        help="Red control: human/rule_ai/alphabeta_ai.",
     )
     parser.add_argument(
         "--black",
         choices=[c.value for c in ControlType],
         default=None,
-        help="黑方控制：human/rule_ai/alphabeta_ai",
+        help="Black control: human/rule_ai/alphabeta_ai.",
     )
-    parser.add_argument("--depth", type=int, default=3, help="alpha-beta 默认深度")
-    parser.add_argument("--red-depth", type=int, default=None, help="红方 alpha-beta 搜索深度")
-    parser.add_argument("--black-depth", type=int, default=None, help="黑方 alpha-beta 搜索深度")
-    parser.add_argument("--swap", action="store_true", help="红黑控制方式互换")
-    parser.add_argument("--flip-view", action="store_true", help="翻转棋盘视角（黑方在下）")
-    parser.add_argument("--fps", type=int, default=60, help="渲染帧率")
-    parser.add_argument("--ai-delay", type=int, default=250, help="AI 落子间隔毫秒")
+    parser.add_argument("--depth", type=int, default=3, help="Default alpha-beta search depth.")
+    parser.add_argument("--red-depth", type=int, default=None, help="Red alpha-beta search depth.")
+    parser.add_argument("--black-depth", type=int, default=None, help="Black alpha-beta search depth.")
+    parser.add_argument("--swap", action="store_true", help="Swap red/black control settings.")
+    parser.add_argument("--flip-view", action="store_true", help="Flip board view.")
+    parser.add_argument("--fps", type=int, default=60, help="Render FPS.")
+    parser.add_argument("--ai-delay", type=int, default=250, help="AI move delay in milliseconds.")
     args = parser.parse_args()
 
     if args.mode == "custom":
@@ -96,4 +96,3 @@ def parse_game_config() -> GameConfig:
         ai_move_delay_ms=max(0, args.ai_delay),
         flip_view=args.flip_view,
     )
-

@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Optional
 
-from chess.core.board import Board
-from chess.core.enums import Side
-from chess.core.move import Move
+from cn_chess.core.board import Board
+from cn_chess.core.enums import Side
+from cn_chess.core.move import Move
 
 from .base_ai import BaseAI
 from .evaluator import evaluate
@@ -46,6 +46,9 @@ class AlphaBetaAI(BaseAI):
             return -MATE_SCORE + ply
         if not board.has_general(side.opponent):
             return MATE_SCORE - ply
+
+        if depth == 0 and not board.is_in_check(side):
+            return evaluate(board, side)
 
         legal_moves = board.generate_legal_moves(side)
         if not legal_moves:

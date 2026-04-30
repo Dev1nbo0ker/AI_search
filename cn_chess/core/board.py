@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Iterator, Optional
 
 from . import rules
-from .enums import PieceType, Side
+from .enums import GameResult, PieceType, Side
 from .move import Move
 from .piece import Piece
 
@@ -181,24 +181,16 @@ class Board:
     def has_general(self, side: Side) -> bool:
         return self.general_pos.get(side) is not None
 
-    def terminal_winner(self) -> Optional[Side]:
+    def game_result(self) -> GameResult:
         if not self.has_general(Side.RED):
-            return Side.BLACK
+            return GameResult.BLACK_WIN
         if not self.has_general(Side.BLACK):
-            return Side.RED
+            return GameResult.RED_WIN
 
         side = self.side_to_move
         legal = self.generate_legal_moves(side)
         if legal:
-            return None
+            return GameResult.ONGOING
         if self.is_in_check(side):
-            return side.opponent
-        return None
-
-    def is_stalemate(self) -> bool:
-        if not self.has_general(Side.RED) or not self.has_general(Side.BLACK):
-            return False
-        side = self.side_to_move
-        legal = self.generate_legal_moves(side)
-        return len(legal) == 0 and not self.is_in_check(side)
-
+            return GameResult.BLACK_WIN if side is Side.RED else GameResult.RED_WIN
+        return GameResult.DRAW

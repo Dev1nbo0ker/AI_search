@@ -6,8 +6,8 @@ from pathlib import Path
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from chess.game.config import parse_game_config
-from chess.game.controller import GameController
+from cn_chess.game.config import parse_game_config
+from cn_chess.game.controller import GameController
 
 
 def main() -> None:

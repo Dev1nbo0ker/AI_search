@@ -3,9 +3,9 @@ from __future__ import annotations
 import random
 from typing import Optional
 
-from chess.core.board import Board
-from chess.core.enums import Side
-from chess.core.move import Move
+from cn_chess.core.board import Board
+from cn_chess.core.enums import Side
+from cn_chess.core.move import Move
 
 from .base_ai import BaseAI
 from .evaluator import piece_value

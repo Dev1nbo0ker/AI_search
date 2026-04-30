@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from chess.core.board import Board
-from chess.core.enums import PieceType, Side
-from chess.core.piece import Piece
+from cn_chess.core.board import Board
+from cn_chess.core.enums import PieceType, Side
+from cn_chess.core.piece import Piece
 
 
 PIECE_VALUES: dict[PieceType, int] = {

@@ -2,26 +2,26 @@ from __future__ import annotations
 
 import pygame
 
-from chess.core.board import Board
-from chess.core.enums import PieceType, Side
-from chess.ui.coord_mapper import CoordMapper
+from cn_chess.core.board import Board
+from cn_chess.core.enums import PieceType, Side
+from cn_chess.ui.coord_mapper import CoordMapper
 
 
 PIECE_TEXT = {
-    (Side.RED, PieceType.GENERAL): "帅",
-    (Side.RED, PieceType.ADVISOR): "仕",
-    (Side.RED, PieceType.ELEPHANT): "相",
-    (Side.RED, PieceType.HORSE): "马",
-    (Side.RED, PieceType.ROOK): "车",
-    (Side.RED, PieceType.CANNON): "炮",
-    (Side.RED, PieceType.PAWN): "兵",
-    (Side.BLACK, PieceType.GENERAL): "将",
-    (Side.BLACK, PieceType.ADVISOR): "士",
-    (Side.BLACK, PieceType.ELEPHANT): "象",
-    (Side.BLACK, PieceType.HORSE): "马",
-    (Side.BLACK, PieceType.ROOK): "车",
-    (Side.BLACK, PieceType.CANNON): "炮",
-    (Side.BLACK, PieceType.PAWN): "卒",
+    (Side.RED, PieceType.GENERAL): "\u5e05",
+    (Side.RED, PieceType.ADVISOR): "\u4ed5",
+    (Side.RED, PieceType.ELEPHANT): "\u76f8",
+    (Side.RED, PieceType.HORSE): "\u9a6c",
+    (Side.RED, PieceType.ROOK): "\u8f66",
+    (Side.RED, PieceType.CANNON): "\u70ae",
+    (Side.RED, PieceType.PAWN): "\u5175",
+    (Side.BLACK, PieceType.GENERAL): "\u5c06",
+    (Side.BLACK, PieceType.ADVISOR): "\u58eb",
+    (Side.BLACK, PieceType.ELEPHANT): "\u8c61",
+    (Side.BLACK, PieceType.HORSE): "\u9a6c",
+    (Side.BLACK, PieceType.ROOK): "\u8f66",
+    (Side.BLACK, PieceType.CANNON): "\u70ae",
+    (Side.BLACK, PieceType.PAWN): "\u5352",
 }
 
 
@@ -30,7 +30,7 @@ class PygameView:
         self.mapper = mapper
         self.flip_view = flip_view
         self.screen = pygame.display.set_mode((mapper.board_width, mapper.board_height + 70))
-        pygame.display.set_caption("中国象棋")
+        pygame.display.set_caption("Chinese Chess")
 
         self.bg_color = (240, 210, 160)
         self.line_color = (60, 40, 20)
@@ -68,14 +68,12 @@ class PygameView:
 
     def _draw_board_grid(self) -> None:
         m = self.mapper
-        # Horizontal lines.
         for r in range(10):
             y = m.margin + r * m.cell_size
             x1 = m.margin
             x2 = m.margin + 8 * m.cell_size
             pygame.draw.line(self.screen, self.line_color, (x1, y), (x2, y), 2)
 
-        # Vertical lines with river gap for middle columns.
         for c in range(9):
             x = m.margin + c * m.cell_size
             y_top = m.margin
@@ -88,16 +86,13 @@ class PygameView:
                 pygame.draw.line(self.screen, self.line_color, (x, y_top), (x, y_river_top), 2)
                 pygame.draw.line(self.screen, self.line_color, (x, y_river_bottom), (x, y_bottom), 2)
 
-        # Palaces.
         self._draw_line_board((0, 3), (2, 5))
         self._draw_line_board((0, 5), (2, 3))
         self._draw_line_board((7, 3), (9, 5))
         self._draw_line_board((7, 5), (9, 3))
 
-        river_text = self.board_font.render("楚 河        汉 界", True, self.line_color)
-        text_rect = river_text.get_rect(
-            center=(m.margin + 4 * m.cell_size, m.margin + int(4.5 * m.cell_size))
-        )
+        river_text = self.board_font.render("\u695a \u6cb3        \u6c49 \u754c", True, self.line_color)
+        text_rect = river_text.get_rect(center=(m.margin + 4 * m.cell_size, m.margin + int(4.5 * m.cell_size)))
         self.screen.blit(river_text, text_rect)
 
     def _draw_line_board(self, from_pos: tuple[int, int], to_pos: tuple[int, int]) -> None:
@@ -131,4 +126,3 @@ class PygameView:
         pygame.draw.rect(self.screen, (225, 190, 140), (0, h, self.mapper.board_width, 70))
         text_img = self.status_font.render(status_text, True, (20, 20, 20))
         self.screen.blit(text_img, (20, h + 18))
-

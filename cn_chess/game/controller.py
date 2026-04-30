@@ -2,13 +2,12 @@ from __future__ import annotations
 
 import pygame
 
-from chess.core.board import Board
-from chess.core.enums import GameResult, Side
-from chess.core.move import Move
-from chess.game.config import GameConfig
-from chess.game.players import Player, create_player
-from chess.ui.coord_mapper import CoordMapper
-from chess.ui.pygame_view import PygameView
+from cn_chess.core.board import Board
+from cn_chess.core.enums import GameResult, Side
+from cn_chess.game.config import GameConfig
+from cn_chess.game.players import create_player
+from cn_chess.ui.coord_mapper import CoordMapper
+from cn_chess.ui.pygame_view import PygameView
 
 
 class GameController:
@@ -20,7 +19,7 @@ class GameController:
         self.view = PygameView(self.mapper, flip_view=config.flip_view)
         self.clock = pygame.time.Clock()
 
-        self.players: dict[Side, Player] = {
+        self.players = {
             Side.RED: create_player(Side.RED, config.red_control, config.red_depth),
             Side.BLACK: create_player(Side.BLACK, config.black_control, config.black_depth),
         }
@@ -99,11 +98,11 @@ class GameController:
             return set()
         side = self.board.side_to_move
         sr, sc = self.selected
-        targets: set[tuple[int, int]] = set()
-        for move in self.board.generate_legal_moves(side):
-            if move.from_row == sr and move.from_col == sc:
-                targets.add((move.to_row, move.to_col))
-        return targets
+        return {
+            (move.to_row, move.to_col)
+            for move in self.board.generate_legal_moves(side)
+            if move.from_row == sr and move.from_col == sc
+        }
 
     def _maybe_make_ai_move(self) -> None:
         side = self.board.side_to_move
@@ -122,36 +121,19 @@ class GameController:
             self.last_ai_move_ms = now
 
     def _update_result(self) -> None:
-        if not self.board.has_general(Side.RED):
-            self.result = GameResult.BLACK_WIN
-            return
-        if not self.board.has_general(Side.BLACK):
-            self.result = GameResult.RED_WIN
-            return
-
-        side = self.board.side_to_move
-        legal_moves = self.board.generate_legal_moves(side)
-        if legal_moves:
-            self.result = GameResult.ONGOING
-            return
-
-        if self.board.is_in_check(side):
-            self.result = GameResult.BLACK_WIN if side is Side.RED else GameResult.RED_WIN
-        else:
-            self.result = GameResult.DRAW
+        self.result = self.board.game_result()
 
     def _status_text(self) -> str:
         if self.result is GameResult.RED_WIN:
-            return "红方胜利（将死）"
+            return "Red wins"
         if self.result is GameResult.BLACK_WIN:
-            return "黑方胜利（将死）"
+            return "Black wins"
         if self.result is GameResult.DRAW:
-            return "和棋（困毙）"
+            return "Draw"
 
         side = self.board.side_to_move
         player = self.players[side]
-        text = f"轮到{side.label}：{player.control_type.value}"
+        text = f"Turn: {side.name.lower()} ({player.control_type.value})"
         if self.board.is_in_check(side):
-            text += "（被将军）"
+            text += " - check"
         return text
-
