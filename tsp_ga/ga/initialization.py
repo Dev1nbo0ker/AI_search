@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import heapq
 import random
 
-from tsp_ga.core.distance import tour_length
+import numpy as np
+
+from tsp_ga.core.distance import batch_tour_lengths
 
 
 def create_random_individual(num_cities: int, rng: random.Random) -> list[int]:
@@ -13,7 +16,7 @@ def create_random_individual(num_cities: int, rng: random.Random) -> list[int]:
 
 def create_nearest_neighbor_individual(
     num_cities: int,
-    distance_matrix: list[list[int]],
+    distance_matrix: np.ndarray,
     rng: random.Random,
     start_city: int | None = None,
 ) -> list[int]:
@@ -32,7 +35,7 @@ def create_nearest_neighbor_individual(
 
 def create_randomized_greedy_individual(
     num_cities: int,
-    distance_matrix: list[list[int]],
+    distance_matrix: np.ndarray,
     rng: random.Random,
     candidate_count: int = 4,
 ) -> list[int]:
@@ -42,8 +45,10 @@ def create_randomized_greedy_individual(
     unvisited.remove(current)
 
     while unvisited:
-        candidates = sorted(unvisited, key=lambda city: distance_matrix[current][city])
-        current = rng.choice(candidates[: min(candidate_count, len(candidates))])
+        current_row = distance_matrix[current]
+        limit = min(candidate_count, len(unvisited))
+        candidates = heapq.nsmallest(limit, unvisited, key=current_row.__getitem__)
+        current = rng.choice(candidates)
         tour.append(current)
         unvisited.remove(current)
 
@@ -54,7 +59,7 @@ def initialize_population(
     population_size: int,
     num_cities: int,
     rng: random.Random,
-    distance_matrix: list[list[int]] | None = None,
+    distance_matrix: np.ndarray | None = None,
     greedy_fraction: float = 0.0,
     randomized_greedy_fraction: float = 0.0,
 ) -> list[list[int]]:
@@ -76,6 +81,7 @@ def initialize_population(
     while len(population) < population_size:
         population.append(create_random_individual(num_cities, rng))
 
-    population.sort(key=lambda tour: tour_length(tour, distance_matrix))
-    return population[:population_size]
+    distances = batch_tour_lengths(population, distance_matrix)
+    ranked_indices = np.argsort(distances, kind="stable")[:population_size]
+    return [population[int(index)] for index in ranked_indices]
 

@@ -4,6 +4,8 @@ from dataclasses import replace
 import random
 import time
 
+import numpy as np
+
 from tsp_ga.config import validate_config
 from tsp_ga.core.distance import build_distance_matrix
 from tsp_ga.ga.crossover import order_crossover, sequential_constructive_crossover
@@ -48,11 +50,11 @@ def run_ga(instance: TSPInstance, config: GAConfig) -> tuple[GAResult, list[Gene
         ):
             _improve_elites_with_two_opt(population, distances, fitnesses, distance_matrix, config, instance.dimension)
 
-        generation_best_index = min(range(len(population)), key=lambda idx: distances[idx])
+        generation_best_index = int(np.argmin(distances))
         generation_best_route = population[generation_best_index][:]
-        generation_best_distance = distances[generation_best_index]
+        generation_best_distance = int(distances[generation_best_index])
 
-        generation_average = sum(distances) / len(distances)
+        generation_average = float(distances.mean())
 
         history.append(
             GenerationStats(
@@ -137,12 +139,12 @@ def run_multiple_seeds(
             best_history = history
 
     best_run = min(run_results, key=lambda item: item.best_distance)
-    distances = [item.best_distance for item in run_results]
+    distances = np.asarray([item.best_distance for item in run_results], dtype=np.int64)
     summary = ExperimentResult(
         runs=run_results,
         best_run=best_run,
-        mean_distance=sum(distances) / len(distances),
-        worst_distance=max(distances),
+        mean_distance=float(distances.mean()),
+        worst_distance=int(distances.max()),
         total_runtime_seconds=total_runtime,
     )
     return summary, best_history
@@ -150,10 +152,10 @@ def run_multiple_seeds(
 
 def _create_offspring(
     population: list[list[int]],
-    fitnesses: list[float],
+    fitnesses: np.ndarray,
     config: GAConfig,
     rng: random.Random,
-    distance_matrix: list[list[int]],
+    distance_matrix: np.ndarray,
     generation: int,
 ) -> list[list[int]]:
     offspring: list[list[int]] = []
@@ -243,16 +245,18 @@ def _should_run_two_opt(
 
 def _improve_elites_with_two_opt(
     population: list[list[int]],
-    distances: list[int],
-    fitnesses: list[float],
-    distance_matrix: list[list[int]],
+    distances: np.ndarray,
+    fitnesses: np.ndarray,
+    distance_matrix: np.ndarray,
     config: GAConfig,
     num_cities: int,
 ) -> None:
     elite_count = min(config.local_search_elite_count, len(population))
-    ranked_indices = sorted(range(len(population)), key=lambda idx: distances[idx])[:elite_count]
+    ranked_indices = np.argpartition(distances, elite_count - 1)[:elite_count]
+    ranked_indices = ranked_indices[np.argsort(distances[ranked_indices])]
 
     for index in ranked_indices:
+        index = int(index)
         improved_route, improved_distance = two_opt_local_search(population[index], distance_matrix)
         if config.validate_permutations:
             _validate_permutation(improved_route, num_cities, "2-opt")
@@ -265,7 +269,7 @@ def _improve_elites_with_two_opt(
 def _inject_random_immigrants(
     population: list[list[int]],
     num_cities: int,
-    distance_matrix: list[list[int]],
+    distance_matrix: np.ndarray,
     config: GAConfig,
     rng: random.Random,
 ) -> None:
@@ -287,7 +291,7 @@ def _inject_random_immigrants(
 
 def _restart_population(
     num_cities: int,
-    distance_matrix: list[list[int]],
+    distance_matrix: np.ndarray,
     config: GAConfig,
     rng: random.Random,
     best_route: list[int],

@@ -1,16 +1,19 @@
 from __future__ import annotations
 
+import numpy as np
+
 
 def select_elites(
     population: list[list[int]],
-    distances: list[int],
+    distances: np.ndarray,
     elite_size: int,
 ) -> list[list[int]]:
     if elite_size == 0:
         return []
 
-    ranked_indices = sorted(range(len(population)), key=lambda idx: distances[idx])
-    return [population[index][:] for index in ranked_indices[:elite_size]]
+    elite_indices = np.argpartition(distances, elite_size - 1)[:elite_size]
+    elite_indices = elite_indices[np.argsort(distances[elite_indices])]
+    return [population[int(index)][:] for index in elite_indices]
 
 
 def next_generation(
@@ -20,4 +23,3 @@ def next_generation(
 ) -> list[list[int]]:
     combined = elites + offspring
     return combined[:population_size]
-

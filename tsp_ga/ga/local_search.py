@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import numpy as np
+
 from tsp_ga.core.distance import tour_length
 
 
-def two_opt_local_search(tour: list[int], distance_matrix: list[list[int]]) -> tuple[list[int], int]:
+def two_opt_local_search(tour: list[int], distance_matrix: np.ndarray) -> tuple[list[int], int]:
     """Improve a tour using iterative 2-opt until no further improvement exists."""
 
     best_tour = tour[:]

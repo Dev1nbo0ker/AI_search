@@ -9,7 +9,7 @@ def parse_maze(lines: list[str]) -> MazeProblem:
     allowed = {"S", "E", "0", "1"}
 
     for raw in lines:
-        row = [ch for ch in raw.strip().replace(" ", "")]
+        row = list("".join(raw.split()))
         if row:
             cleaned.append(row)
 
